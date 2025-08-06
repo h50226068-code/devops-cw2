@@ -17,7 +17,13 @@ pipeline {
                 script {
                     // Run the SonarQube analysis
                     withSonarQubeEnv('SonarQube') {  // Use the SonarQube configuration name from Jenkins
-                        sh "/opt/sonar-scanner-4.6.2.2472-linux/bin/sonar-scanner -Dsonar.login=${SONAR_TOKEN}"  // Running the analysis with token
+                        sh """
+                        sonar-scanner \
+                            -Dsonar.login=${SONAR_TOKEN} \
+                            -Dsonar.projectKey=my_project_key \
+                            -Dsonar.projectName="My Project" \
+                            -Dsonar.projectVersion="1.0" \
+                        """
                     }
                 }
             }
