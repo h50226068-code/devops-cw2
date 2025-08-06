@@ -1,28 +1,25 @@
 pipeline {
     agent any
 
+    environment {
+        SONAR_TOKEN = credentials('sonar-token')  // Reference the token stored in Jenkins credentials
+    }
+
     stages {
-        stage('Clone') {
+        stage('Checkout') {
             steps {
-                git 'https://github.com/h50226068-code/devops-cw.git'
+                checkout scm  // Checkout your source code from Git
             }
         }
 
-        stage('Build') {
+        stage('SonarQube Analysis') {
             steps {
-                sh 'echo "Building..."'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                sh 'echo "Running tests..."'
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                sh 'echo "Deploying application..."'
+                script {
+                    // Run the SonarQube analysis
+                    withSonarQubeEnv('SonarQube') {  // Use the SonarQube configuration name from Jenkins
+                        sh "sonar-scanner -Dsonar.login=${SONAR_TOKEN}"  // Running the analysis with token
+                    }
+                }
             }
         }
     }
